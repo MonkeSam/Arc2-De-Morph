@@ -21,7 +21,7 @@ and follow the given instruction in the README file to setup [Arc2Face](https://
 
 For face analysis it's needed [DeepFace](https://github.com/serengil/deepface), and a new enviroment to avoid dependencies conflicts with ArcFace.
 
-```
+```bash
 conda create -n deepface
 conda activate deepface
 pip install deepface
