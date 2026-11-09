@@ -1,6 +1,9 @@
 import subprocess, sys, argparse
 
-
+#TODO:
+# 1. Extracted directory must be binded with demorphing output directory
+# 2. Add algorithm parameter to select morphed images generated with that type of algorithm
+# 3. Double-check for missing arguments
 parser = argparse.ArgumentParser(description="Demorphing pipeline with analisys")
 parser.add_argument("--morphs", type=str, required=True, help="Directory of the morphed images")
 parser.add_argument("--original", type=str, required=True, help="Directory of the original images")
