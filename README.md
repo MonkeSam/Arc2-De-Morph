@@ -24,8 +24,11 @@ For face analysis it's needed [DeepFace](https://github.com/serengil/deepface), 
 ```
 conda create -n deepface
 conda activate deepface
-git clone https://github.com/serengil/deepface.git
+pip install deepface
+pip install pandas #we use pandas to analyze deepface results
 ```
+
+
 
 ## Usage
 
