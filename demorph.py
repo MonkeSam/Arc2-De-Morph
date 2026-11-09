@@ -235,7 +235,7 @@ def generate_image(morphed_path, remove_path, num_steps, guidance_scale, seed, n
 parser = argparse.ArgumentParser(description="Morphing pipeline")
 parser.add_argument("--morphs", type=str, required=True, help="Directory of the morphed images")
 parser.add_argument("--original", type=str, required=True, help="Directory of the original images")
-parser.add_argument("--output", type=str, required=True, help="Output directory for the generated images")
+parser.add_argument("--output", type=str, required=True, default=".", help="Output directory for the generated images")
 parser.add_argument("--num_steps", type=int, default=25, help="Number of diffusion steps")
 parser.add_argument("--guidance_scale", type=float, default=3.0, help="Guidance scale for the diffusion model")
 parser.add_argument("--seed", type=int, default=23, help="Random seed for the diffusion model")
