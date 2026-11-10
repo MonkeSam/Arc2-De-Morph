@@ -7,10 +7,6 @@ import shutil, os
 HERE = Path(__file__).resolve().parent
 CONDA = os.environ.get("CONDA_EXE") or shutil.which("conda") or sys.exit("conda not found")
 
-#TODO:
-# 1. Extracted directory must be binded with demorphing output directory
-# 2. Add algorithm parameter to select morphed images generated with that type of algorithm
-# 3. Double-check for missing arguments
 parser = argparse.ArgumentParser(description="Demorphing pipeline with analisys")
 parser = add_common_args(parser, output_dir=DEFAULT_DEMORPH_PATH,output_help="Directory of the extracted images")
 parser.add_argument("--num_steps", type=int, default=25, help="Number of diffusion steps")
