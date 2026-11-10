@@ -7,7 +7,7 @@ import shutil, os
 HERE = Path(__file__).resolve().parent
 CONDA = os.environ.get("CONDA_EXE") or shutil.which("conda") or sys.exit("conda not found")
 
-parser = argparse.ArgumentParser(description="Demorphing pipeline with analisys")
+parser = argparse.ArgumentParser(description="Demorphing and analisys pipeline")
 parser = add_common_args(parser, output_dir=DEFAULT_DEMORPH_PATH,output_help="Directory of the extracted images")
 parser.add_argument("--num_steps", type=int, default=25, help="Number of diffusion steps")
 parser.add_argument("--guidance_scale", type=float, default=3.0, help="Guidance scale for the diffusion model")
