@@ -86,7 +86,7 @@ parser = add_common_args(parser,"./distance_stats/","Output directory for stats.
 parser.add_argument("--extracted", type=str, required=True, help="Directory of the extracted images")
 args = parser.parse_args()
 
-ALGORITHM = f"C{args.algorithm}"
+ALGORITHM = algorithm_code(args.algorithm)
 
 inv_pattern   = re.compile(r"^INV_(M_.+)_REMOVED_([^_-]+)-([^_]+)\.png$")
 
@@ -118,17 +118,13 @@ for name in sorted(os.listdir(args.morphs)):
         accomplice = original_name(acc_id, pose)
 
 
-        r_crim = inv_files[pose][0]["removed"]
-        r_acc = inv_files[pose][1]["removed"]
-        demorphed_criminal = inv_files[pose][1]["path"]
-        demorphed_accomplice = inv_files[pose][0]["path"]
-        if r_crim != crim_id: #asserting removed criminal is the first of the list, if is not it will be swapped
-            r_acc = r_crim
-            r_crim = inv_files[pose][1]["removed"]
+        by_subject = {f["removed"]: f["path"] for f in inv_files[pose]}
+        if crim_id not in by_subject or acc_id not in by_subject:
+            print(f"[SKIPPED] {name}: pose {pose} missing ")
+            continue
 
-            demorphed_criminal = inv_files[pose][0]["path"] #demorphed_crimnal is the image in which accomplice was removed
-            demorphed_accomplice = inv_files[pose][1]["path"] #demorphed_accomplice same as demorphed_criminal
-
+        demorphed_criminal = by_subject[acc_id]     # immagine in cui il complice è stato rimosso
+        demorphed_accomplice = by_subject[crim_id]  # immagine in cui il criminale è stato rimosso
 
         paths.append({
             "morph_stem": stem,

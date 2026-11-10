@@ -8,3 +8,5 @@ def column(label: str, kind: str = "distance") -> str:
 FIELDS = ["morph", "pose", "criminal", "accomplice"] + [
     column(label, kind) for label in LABELS for kind in ("distance", "verified")
 ]
+
+DEFAULT_DEMORPH_PATH = "./invslerp"
