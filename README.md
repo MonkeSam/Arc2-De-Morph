@@ -37,6 +37,8 @@ The project consists of 3 scripts:
 
 > To generate morphed images, instructions for using `morphed_multiple.py` are specified in the [Arc2Morph](https://github.com/MI-BioLab/arc2morph.git) repository.
 
+For a better understanding of the script arguments it's possible to use `--help` or `-h` flag to see parameters descriptions.
+
 ### Orchestrator
 
 The demorphing and analysis pipeline is executed by `orchestrator.py`, which runs every stage of the project.
