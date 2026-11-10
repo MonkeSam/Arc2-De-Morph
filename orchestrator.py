@@ -15,6 +15,7 @@ parser.add_argument("--randomize_seed", action='store_true', help="Randomize the
 parser.add_argument("--interp_mode", choices=['arcface-slerp', 'encoded-slerp'], default='encoded-slerp', help="Interpolation mode for the morphing")
 parser.add_argument("--pose", type=int,  choices=[1,2,3], default=1, help="Pose Id \n1 => -11\n2 =>-12\n3=>-13")
 parser.add_argument("--extracted", type=str, required=True, help="Directory of the extracted images")
+parser.add_argument("--algorithm", type=int, required=True, help="Select images generated with a specific algorithm, must be algorithm integer code for \'CXX\'")
 args = parser.parse_args()
 
 

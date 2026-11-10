@@ -1,5 +1,7 @@
 import argparse
 import os,re
+from common.utlis import inv_name, morph_pattern, original_name
+
 
 from diffusers import (
     StableDiffusionPipeline,
@@ -29,7 +31,7 @@ import random
 MAX_SEED = np.iinfo(np.int32).max
 device = "cuda:0"
 dtype = torch.float16
-ALGORITHM = "C05"
+
 # Load face detection and recognition package
 app = FaceAnalysis(name='antelopev2', root='./', providers=['CUDAExecutionProvider', 'CPUExecutionProvider'])
 app.prepare(ctx_id=0, det_size=(640, 640))
@@ -235,7 +237,7 @@ def generate_image(morphed_path, remove_path, num_steps, guidance_scale, seed, n
 parser = argparse.ArgumentParser(description="Morphing pipeline")
 parser.add_argument("--morphs", type=str, required=True, help="Directory of the morphed images")
 parser.add_argument("--original", type=str, required=True, help="Directory of the original images")
-parser.add_argument("--output", type=str, required=True, default=".", help="Output directory for the generated images")
+parser.add_argument("--output", type=str, required=True, default="./invslerp/", help="Output directory for the generated images")
 parser.add_argument("--num_steps", type=int, default=25, help="Number of diffusion steps")
 parser.add_argument("--guidance_scale", type=float, default=3.0, help="Guidance scale for the diffusion model")
 parser.add_argument("--seed", type=int, default=23, help="Random seed for the diffusion model")
@@ -243,13 +245,15 @@ parser.add_argument("--use_lcm", action='store_true', help="Use LCM for latent c
 parser.add_argument("--randomize_seed", action='store_true', help="Randomize the seed for each image")
 parser.add_argument("--interp_mode", choices=['arcface-slerp', 'encoded-slerp'], default='encoded-slerp', help="Interpolation mode for the morphing")
 parser.add_argument("--pose", type=int,  choices=[1,2,3], default=1, help="Pose Id \n1 => -11\n2 =>-12\n3=>-13")
+parser.add_argument("--algorithm", type=int, required=True, help="Select images generated with a specific algorithm, must be algorithm integer code for \'CXX\'")
 args = parser.parse_args()
+ALGORITHM = f"C{args.algorithm}"
 
 pattern = re.compile(rf"^M_([^_]+)_([^_]+)_{ALGORITHM}_.+\.png$")
 
 def extract_couples(morphed_path,morphed_stem,extract_face_path,removed_stem):
 
-    fname = f"INV_{morphed_stem}_REMOVED_{removed_stem}.png" # inverse [INV] of morphed image extracting [EXTR] face
+    fname = inv_name(morphed_stem, removed_stem) # inverse [INV] of morphed image extracting [EXTR] face
     fpath = f"{args.output}/{ALGORITHM}/{args.interp_mode}/{fname}"
     if not os.path.exists(fpath):
         image = generate_image(morphed_path, extract_face_path, num_steps, guidance_scale, seed, 1, use_lcm, interp_mode)
@@ -258,12 +262,11 @@ def extract_couples(morphed_path,morphed_stem,extract_face_path,removed_stem):
 paths = []
 pose = args.pose
 for name in sorted(os.listdir(args.morphs)):
-    m = pattern.match(name)
+    m = morph_pattern(ALGORITHM).match(name)
     if m:
 
-        criminal = f"{m.group(1).split('-')[0]}-1{pose}.jpg"
-        accomplice = f"{m.group(2).split('-')[0]}-1{pose}.jpg"
-
+        criminal   = original_name(m["criminal"],   f"1{pose}")
+        accomplice = original_name(m["accomplice"], f"1{pose}")
         if os.path.exists(os.path.join(args.original, accomplice)) and os.path.exists(os.path.join(args.original, criminal)):
             paths.append((name, criminal, accomplice))
 

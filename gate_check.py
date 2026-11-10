@@ -7,7 +7,7 @@ THRESHOLD = 0.5143
 parser = argparse.ArgumentParser(description="Gate checker")
 
 #parser.add_argument("--output", type=str, required=True, help="Output directory for ")
-parser.add_argument("--csv", type=str,required=True, help ="Csv files directory")
+parser.add_argument("--csv", type=str,required=True, default="", help ="Csv files directory")
 parser.add_argument("--threshold", type=float, default=THRESHOLD, help="Face distance threshold")
 args = parser.parse_args()
 

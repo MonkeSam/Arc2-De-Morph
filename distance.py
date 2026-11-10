@@ -2,13 +2,9 @@ from deepface import DeepFace
 import argparse, re, os, csv,logging
 from collections import defaultdict
 from deepface.modules.demography import List
+from common.utlis import *
+from common.const import *
 
-LABELS = ["A_vs_C", "M_vs_C", "M_vs_A", "DC_vs_A", "DC_vs_C", "DA_vs_C", "DA_vs_A"]
-FIELDS = ["morph","pose", "criminal", "accomplice"] + \
-         [f"{l}_{k}" for l in LABELS for k in ("distance", "verified")]
-POSES = ["11","12","13"]
-
-ALGORITM = "C05"
 
 def get_stats(morphed_path,criminal,accomplice,demorph_criminal,demorph_accomplice,log_file):
     '''
@@ -78,50 +74,49 @@ def append_row(entry, output_file):
     }
     for l in LABELS:
         r = entry["stats"].get(l)
-        row[f"{l}_distance"] = r["distance"] if r else ""
-        row[f"{l}_verified"] = r["verified"] if r else ""
+        row[column(l, "distance")] = r["distance"] if r else ""
+        row[column(l, "verified")] = r["verified"] if r else ""
 
     with open(output_file, "a", newline="") as f:
         csv.DictWriter(f, fieldnames=FIELDS).writerow(row)
 
 
 parser = argparse.ArgumentParser(description="Demorphed distance")
-
-parser.add_argument("--morphs", type=str, required=True, help="Directory of the morphed images")
-parser.add_argument("--original", type=str, required=True, help="Directory of the original images")
+parser = add_common_args(parser,"./distance_stats/","Output directory for stats.csv")
 parser.add_argument("--extracted", type=str, required=True, help="Directory of the extracted images")
-parser.add_argument("--output", type=str, required=True, help="Output directory for stats.csv")
 args = parser.parse_args()
 
-morph_pattern = re.compile(rf"^(M_([^_]+)_([^_]+)_{ALGORITM}_.+)\.png$")
+ALGORITHM = f"C{args.algorithm}"
+
 inv_pattern   = re.compile(r"^INV_(M_.+)_REMOVED_([^_-]+)-([^_]+)\.png$")
 
 inv_by_stem = defaultdict(list)
 for name in sorted(os.listdir(args.extracted)):
-    m = inv_pattern.match(name)
+    m = INV_PATTERN.match(name)
     if m:
-        stem, removed_subj, pose = m.groups()
+        stem, removed_subj, pose = m["stem"], m["subject"], m["pose"]
         inv_by_stem[(stem,pose)].append({"path": os.path.join(args.extracted,name),"removed":removed_subj})
 
-
+MORPH_RE = morph_pattern(ALGORITHM)
 paths = []
 '''
 For each morphed image are extracted usefull data to identify subjects,
 then for each pose are stored paths and names needed for image analysis.
 '''
 for name in sorted(os.listdir(args.morphs)):
-    m = morph_pattern.match(name)
+    m = MORPH_RE.match(name)
     if not m:
         continue
-    stem, crim_id, acc_id= m.groups()
-    crim_id = crim_id.split("-")[0]
-    acc_id = acc_id.split("-")[0]
+    stem = m["stem"]
+    crim_id = subject_id(m["criminal"])
+    acc_id = subject_id(m["accomplice"])
 
     inv_files = {}
     for pose in POSES:
         inv_files[pose] = inv_by_stem.get((stem,pose), [])
-        criminal = f"{crim_id}-{pose}.jpg"
-        accomplice =  f"{acc_id}-{pose}.jpg"
+        criminal = original_name(crim_id, pose)
+        accomplice = original_name(acc_id, pose)
+
 
         r_crim = inv_files[pose][0]["removed"]
         r_acc = inv_files[pose][1]["removed"]
@@ -149,7 +144,7 @@ for name in sorted(os.listdir(args.morphs)):
 
     if not inv_files:
         continue
-fname =f"stats_{os.path.basename(os.path.normpath(args.extracted))}_{ALGORITM}"
+fname =f"stats_{os.path.basename(os.path.normpath(args.extracted))}_{ALGORITHM}"
 log_file = f"LOG_{fname}.log"
 out_file = os.path.join(args.output, fname + ".csv")
 init_csv(out_file)
