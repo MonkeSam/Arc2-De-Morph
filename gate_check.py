@@ -1,8 +1,8 @@
 import argparse
 import os
 import pandas as pd
+from common.const import THRESHOLD
 
-THRESHOLD = 0.5143
 
 parser = argparse.ArgumentParser(description="Gate checker")
 parser.add_argument("--csv", type=str, default="./distance_stats/", required=True, help="Csv files directory")
