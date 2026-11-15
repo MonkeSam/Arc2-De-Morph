@@ -33,7 +33,7 @@ The project consists of 3 scripts:
 
 - `demorph.py` extracts faces from a given set of image files.
 - `distance.py` gets statistics from the `demorph.py` output.
-- `gate_check.py` summarizes the statistics obtained with `distance.py`.
+- `gate_check.py` get a final report of statistics obtained with `distance.py`.
 
 > To generate morphed images, instructions for using `morphed_multiple.py` are specified in the [Arc2Morph](https://github.com/MI-BioLab/arc2morph.git) repository.
 
