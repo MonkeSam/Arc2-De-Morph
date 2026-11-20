@@ -4,7 +4,10 @@ This is an [MI@Biolab](https://miatbiolab.csr.unibo.it/) research project aimed 
 
 ## Installation
 
-Demorphing and analysis require different environments.
+Demorphing and analysis require different environments, following steps should be done inside the cloned folder  
+```bash
+git clone https://github.com/MonkeSam/Arc2-De-Morph.git
+```
 
 ### Demorphing
 
