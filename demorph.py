@@ -108,7 +108,7 @@ def slerp(v0, v1, t, DOT_THRESHOLD=0.9995):
 
   # if no elements are lerpable, our vectors become 0-dimensional, preventing broadcasting
   if gotta_lerp.any():
-    lerped = torch.lerp(v0, v1, t)
+    lerped = v0 - (t * v1) / (1 - t) #inverse lerp, v0=morphed, v1=removed face
     out = lerped.where(gotta_lerp.unsqueeze(-1), out)
 
   # if no elements are slerpable, our vectors become 0-dimensional, preventing broadcasting
