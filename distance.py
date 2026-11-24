@@ -29,7 +29,12 @@ def get_stats(morphed_path,criminal,accomplice,demorph_criminal,demorph_accompli
     results = {}
     for c in compare:
         try:
-            stats : dict = DeepFace.verify(img1_path = compare[c][0], img2_path = compare[c][1], model_name="ArcFace", detector_backend ='mtcnn')
+            stats : dict = DeepFace.verify(img1_path = compare[c][0],
+                img2_path = compare[c][1],
+                model_name="ArcFace",
+                detector_backend ='mtcnn',
+                threshold=THRESHOLD
+            )
             results[c] = stats
         except ValueError as e:
             message = f"{e} calculating {c} with img1_path = {compare[c][0]} and img2_path = {compare[c][1]}"
@@ -141,7 +146,7 @@ for name in sorted(os.listdir(args.morphs)):
     if not inv_files:
         continue
 fname =f"stats_{os.path.basename(os.path.normpath(args.extracted))}_{ALGORITHM}"
-log_file = f"LOG_{fname}.log"
+log_file = os.path.join(args.output ,f"LOG_{fname}.log")
 out_file = os.path.join(args.output, fname + ".csv")
 init_csv(out_file)
 done = load_done(out_file)
