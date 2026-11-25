@@ -108,8 +108,8 @@ def slerp(v0, v1, t, DOT_THRESHOLD=0.9995):
 
   # if no elements are lerpable, our vectors become 0-dimensional, preventing broadcasting
   if gotta_lerp.any():
-    lerped = torch.lerp(v0,v1,t)
-    #lerped = v0 - (t * v1) / (1 - t) #inverse lerp, v0=morphed, v1=removed face
+    #lerped = (v0_normed- t * v1_normed) / (1 - t) #inverse lerp, v0=morphed, v1=removed face
+    lerped = 2 * v0 - v1 #inverse lerp when t=0.5
     out = lerped.where(gotta_lerp.unsqueeze(-1), out)
 
   # if no elements are slerpable, our vectors become 0-dimensional, preventing broadcasting
@@ -210,10 +210,17 @@ def generate_image(morphed_path, remove_path, num_steps, guidance_scale, seed, n
         before_id_emb_interp = slerp(morphed_id_emb, remove_id_emb, 0.5)
         before_id_emb_interp = before_id_emb_interp/torch.norm(before_id_emb_interp, dim=1, keepdim=True)  # normalize embedding
         id_emb_interp = project_face_embs(pipeline, before_id_emb_interp)    # pass throught the encoder
+
     else:  # encoded-slerp or encoded-lerp
         remove_id_emb = project_face_embs(pipeline, remove_id_emb)    # pass throught the encoder
         morphed_id_emb = project_face_embs(pipeline, morphed_id_emb)
+
         id_emb_interp = slerp(morphed_id_emb, remove_id_emb, 0.5) #extracting   # interpolate between the two embeddings
+
+        print(f"ID:\t{torch.norm(id_emb_interp, dim=1, keepdim=True)}")
+
+
+
 
     # pose extraction with EMOCA
     print("Getting pose...")
