@@ -1,7 +1,8 @@
 import re,argparse
 from pathlib import Path
 
-def add_common_args(parser,output_dir: str = ".", output_help: str = "Output directory"):
+def add_common_args(parser,output_dir: str = ".", output_help: str = "Output directory",
+                    output_required: bool = True):
     """Common argument  in demorph.py and distance.py."""
     def two_digits(value: str) -> str:
         '''Algorithm code format check.'''
@@ -13,7 +14,7 @@ def add_common_args(parser,output_dir: str = ".", output_help: str = "Output dir
 
     parser.add_argument("--morphs", type=str, required=True, help="Directory of the morphed images")
     parser.add_argument("--original", type=str, required=True, help="Directory of the original images")
-    parser.add_argument("--output", type=str, required=True, default=output_dir, help=output_help)
+    parser.add_argument("--output", type=str, required=output_required, default=output_dir, help=output_help)
     parser.add_argument(
         "--algorithm", type=two_digits, required=True,
         help="Select images generated with a specific algorithm, must be algorithm integer code for 'CXX'",

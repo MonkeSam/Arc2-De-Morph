@@ -10,3 +10,9 @@ FIELDS = ["morph", "pose", "criminal", "accomplice"] + [
 ]
 
 DEFAULT_DEMORPH_PATH = "./invslerp"
+
+# Single root directory for every pipeline output, and its subfolders
+DEFAULT_OUTPUT_ROOT = "Arc2DeMorph"
+DEMORPH_SUBDIR = "invslerp"
+STATS_SUBDIR = "distance_stats"
+GATE_LOG_NAME = "gate_results.log"

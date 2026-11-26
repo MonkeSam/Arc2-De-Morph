@@ -4,6 +4,7 @@ from collections import defaultdict
 from deepface.modules.demography import List
 from common.utlis import *
 from common.const import *
+from common.compare_view import export_sheets
 
 
 def get_stats(morphed_path,criminal,accomplice,demorph_criminal,demorph_accomplice,log_file):
@@ -140,11 +141,10 @@ for name in sorted(os.listdir(args.morphs)):
             "demorphed_criminal": demorphed_criminal,
             "demorphed_accomplice": demorphed_accomplice
         })
-
-
-
     if not inv_files:
         continue
+interp_mode = Path(args.extracted).name   # "arcface-slerp" or "encoded-slerp"
+export_sheets(paths, interp_mode, out_dir=Path(args.output).parent / "comparisons")
 fname =f"stats_{os.path.basename(os.path.normpath(args.extracted))}_{ALGORITHM}"
 log_file = os.path.join(args.output ,f"LOG_{fname}.log")
 out_file = os.path.join(args.output, fname + ".csv")
@@ -159,6 +159,7 @@ will be stored in a .csv file appending stats returned.
 for p in paths:
     if p["morph_stem"] in done:
         continue
+
     stats = get_stats(p["morphed"] ,p["criminal"], p["accomplice"],
                         p["demorphed_criminal"], p["demorphed_accomplice"],log_file)
     append_row({

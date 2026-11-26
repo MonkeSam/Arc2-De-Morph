@@ -44,10 +44,9 @@ def get_efficency(df: pd.DataFrame, out):
     print(f"\nGlobal efficency is {percentile:.2f}%\t#Couples of images where both demorphed subjects match their originals\n", file=out)
 
 
-out_dir = os.path.dirname(os.path.abspath(args.output))
-os.makedirs(out_dir, exist_ok=True)
 
-with open(args.output, "w", encoding="utf-8") as out:
+fout = os.path.join(args.output,"gate_result.log")
+with open(fout, "w", encoding="utf-8") as out:
     for name in sorted(os.listdir(args.csv)):
         if not name.lower().endswith(".csv"):
             continue
@@ -57,5 +56,3 @@ with open(args.output, "w", encoding="utf-8") as out:
 
         gate_passed(stats, out)
         get_efficency(stats, out)
-
-print(f"Results written to {args.output}")
